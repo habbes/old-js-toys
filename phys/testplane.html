@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="CartesianPlane.js" ></script>
+</head>
+<body>
+
+    <canvas id="canvas" width="1000" height="400"></canvas>
+
+    <div id="posBox" style="position:absolute;min-width:60px;border:1px solid black">
+        <div>x: <span id="xPos"></span></div>
+        <div>y: <span id="yPos"></span></div>
+    </div>
+
+    <script>
+        var canvas = document.getElementById("canvas");
+        var o = new Coord(canvas.width / 2, canvas.height / 2);
+        var plane = new CartesianPlane(canvas.getContext('2d'), 0, 0, canvas.width, canvas.height, o.x, o.y, 10, 10, 1, 1);
+        plane.borders = true;
+        plane.refresh();
+    </script>
+
+    <script>
+        function Ball(x, y, radius, style) {
+            this.coord = new Coord(x, y);
+            this.radius = radius;
+            this.style = style;
+        }
+    </script>
+
+    <script>
+        function drawBall(ball, plane) {
+            plane.context.beginPath();
+            coord = plane.getInnerCoord(ball.coord);
+            plane.context.arc(coord.x, coord.y, ball.radius, 0, Math.PI * 2);
+            plane.context.fillStyle = ball.style;
+            plane.context.fill();
+        }
+    </script>
+
+    <script>
+        //1Danimation
+        var speed = 10;
+        var t = 0;
+        
+       
+        var stop = 10;
+        var initDist = plane.getMinCoord().x;
+
+        function getDist(t, speed) {
+            return speed * time;
+        }
+
+        var frameLength = 33;//duration of a frame in milliseconds
+
+        b = new Ball(0, 0, 10, "yellow");
+        b.coord.x = initDist;
+        var dir = 1;
+        var i = 0;
+        var timeout;
+        var dist = 0;
+        var hits = 0;
+        var lastTime = new Date().getTime();
+        function animate() {
+            plane.clear();
+            drawBall(b, plane);
+            now = new Date();
+            t += (now - lastTime) / 1000;
+            lastTime = now;
+            
+
+            
+            if (b.coord.x >= plane.getMaxCoord().x) {
+                dir = -1; hits++;
+            }
+            else if (b.coord.x <= plane.getMinCoord().x) {
+                dir = 1; hits++;
+            }
+
+            //b.coord.x += dir * speed * frameLength / 1000;
+            b.coord.x = initDist + speed * t;
+            b.coord.y = Math.sin(t * 10) * 3;
+
+            dist += speed * frameLength / 1000;
+            //console.log(t, b.coord.x);
+            if (t <= stop) {
+                timeout = setTimeout(animate, frameLength);
+                
+            } else {
+                clearTimeout(timeout);
+                console.log("stop");
+                
+            }
+        }
+
+        animate();
+
+
+
+        
+    </script>
+
+    <script>
+        
+        var posBox = document.getElementById("posBox");
+        var xPos = document.getElementById("xPos");
+        var yPos = document.getElementById("yPos");
+
+        canvas.onmousemove = function (evt) {
+            var x = evt.clientX - canvas.offsetLeft;
+            var y = evt.clientY - canvas.offsetTop;
+            //console.log(y);
+            posBox.style.top = (evt.clientY - 2 - xPos.offsetHeight ) + "px";
+            posBox.style.left = (evt.clientX + 2) + "px";
+
+            var c = new Coord(x, y);
+            //console.log(c);
+            var inner = plane.getGraphCoord(c);
+            //console.log(inner);
+
+            xPos.textContent = inner.x;
+            yPos.textContent = inner.y;
+            
+
+        }
+        /*
+        var inner = plane.getInnerCoord(new Coord(2, 1));
+        alert(inner.x + " " + inner.y);
+        */
+        
+    </script>
+
+</body>
+</html>

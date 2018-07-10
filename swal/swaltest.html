@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="swal.js"></script>
+<script src="swalparser.js"></script>
+<script>
+var program = new swal.Program({}, {});
+program.addInstruction(new swal.Assignement(program,"x", new swal.NumberExpression(program, 10), true));
+program.addInstruction(new swal.Assignement(program,"y", new swal.NumberExpression(program, 2)));
+program.addInstruction(new swal.Assignement(program,"y", new swal.NumberExpression(program, 5)));
+program.execute();
+
+console.log("LOCAL VARS");
+for (n in program.locals){
+	console.log(n,"=", program.locals[n].value);
+}
+
+console.log("GLOBAL VARS");
+for (n in program.globals){
+	console.log(n,"=", program.globals[n].value);
+}
+
+var source = 'x = 12\ny = 2\nx = 14\nnum = 89';
+
+var tokens = swal.lexer(swal.tokenExprs, source);
+var program = swal.fakeParse(tokens);
+</script>
+</head>
+<body>
+
+</body>
+</html>

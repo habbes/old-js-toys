@@ -1,0 +1,28 @@
+<html>
+
+
+
+<body>
+
+<div id="test" onresponsereceived="console.log('me')"></div>
+
+<button id="btn" >Click Me</button>
+<script>
+
+//document.getElementById("test").addEventListener("responsereceived", f = function(e){console.log(e.detail.name)}, false);
+
+document.getElementById("btn").addEventListener("click", f = function(e){
+	document.getElementById("test").dispatchEvent(
+		new CustomEvent('responsereceived', {detail: {name: 'Habbes'}, bubbles:true, cancelable:true})
+		);
+}, false);
+
+
+
+
+
+</script>
+
+</body>
+
+</html>

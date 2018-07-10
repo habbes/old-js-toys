@@ -1,0 +1,22 @@
+<html>
+<head>
+
+</head>
+<body>
+	<div style="display:none"id="tag">
+	<img src="loading16.gif" />
+	</div>
+
+	<button value="click me" onclick= "
+		document.getElementById('tag').display.style = 'block';
+
+		setTimeout(function(){
+			document.getElementById('tag').display.style = 'none';
+			document.getElementById('tag').textContent = 'The world of helloss!!!!!!!';
+
+		},5000)
+	"/>
+
+
+</body>
+</html>

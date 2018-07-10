@@ -1,0 +1,96 @@
+<html>
+<head>
+<script src="tabviewer.js"></script>
+<style>
+
+#tabs .tab {
+	display:none;
+	border:2px solid black;
+	padding:10px;
+	width:500px;
+	height:200px;
+}
+
+.inverted {
+	color:white;
+	background-color:black;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- this will be used and controlled by an object of the TabViewer class -->
+<div id="tabViewer">
+	<div id="buttonList">
+		<button>Tab 1</button><button>Tab 2</button><button>Tab 3</button>
+	</div>
+	<div id="tabs">
+		<div class="tab"><div>Tab Content 1</div></div>
+		<div class="tab">Tab Content 2</div>
+		<div class="tab"><div>Tab Content 3</div></div>
+	</div>
+</div>
+<script>
+var tabViewer = new TabViewer();
+var tv = document.getElementById("tabViewer");
+var btns = tv.getElementsByTagName("button");
+var pages = document.getElementById("tabs").getElementsByClassName("tab");
+
+for(var i = 0; i < btns.length; i++){
+	//load the tab pages to the viewer
+	tabViewer.addTab(new Tab(btns[i], pages[i]));
+}
+//select the first tab, this show the selected tab and hides all others
+tabViewer.selectIndex(0);
+
+//by default, it sets display="block" to show and "none" to hide, you can
+//change this behaviour by providing custom show and hide functions using
+//the method tabViewer.overrideShow(callback) or overrideHide(callback)
+t1 = tabViewer.tabAt(1);
+t1.overrideShow(function(){
+	this.getContent().classList.add("inverted");
+	this.getContent().style.display="block";
+});
+
+t1.overrideHide(function(){
+	var c = this.getContent();
+	c.classList.remove("inverted");
+	c.style.display = "none";
+});
+
+//you can also override all tabs at the same time calling overrideHide/Show() from the TabViewer
+//tabViewer.overrideShow(func)
+
+//You can register an event handler to be notified when a tab is selected or unselect
+
+tabViewer.tabAt(2).addSelectEventListener(function(e){
+	//use e.detail.tab to get the Tab object that was selected
+	alert("Tab selected: " + e.detail.tab.getButton().textContent);
+})
+
+//You can use the event-handling method to load data via AJAX when tab is selected
+//select for such code could look like this:
+/*
+tab.addSelectEventListener(
+	function(e){
+		var tab = e.detail.tab;
+		var page = e.detail.getContent();
+		if(!tab.contentLoaded){
+			//load content via ajax
+			//open ajax request connection
+			//request content from server
+			//write content on tab page
+			page.write(data);
+			//save state so it won't load again when selected
+			tab.contentLoaded = true;
+		}
+	}
+);
+*/
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="CartesianPlane.js" ></script>
+    <script src="GameWorld.js"></script>
+    <script src="Snake.js"></script>
+</head>
+<body>
+
+    <canvas id="canvas" width="400" height="400"></canvas>
+
+
+    <script>
+        var canvas = document.getElementById("canvas");
+        var o = new Coord(canvas.width / 2, canvas.height / 2);
+        var plane = new CartesianPlane(canvas.getContext('2d'), 0, 0, canvas.width, canvas.height, o.x, o.y, 20, 20, 1, 1);
+        plane.borders = true;
+        plane.refresh();
+    </script>
+
+    
+
+
+    <script>
+        var obj = {};
+        obj.coord = new Coord(10, 10);
+        obj.draw = function (plane, context) {
+            console.log(plane, context);
+            context.beginPath();
+            context.fillStyle = "red";
+            var c = plane.getInnerCoord(this.coord);
+            context.fillRect(c.x, c.y, 2 * plane.xunit, 2 * plane.yunit);
+            context.stroke();
+        }
+
+        function Food(x, y) {
+            this.coord = new Coord(x, y);
+            this.draw = function (plane, context) {
+                //console.log(plane, context);
+                context.beginPath();
+                context.fillStyle = "yellow";
+                var c = plane.getInnerCoord(this.coord);
+                context.fillRect(c.x, c.y, plane.xunit, plane.yunit);
+                context.stroke();
+            }
+        }
+
+        var snake = new Snake(0, 0, 3, "left");
+
+        
+
+        var world = new GameWorld(plane);
+        world.addObject(snake, true);
+
+        var food;
+
+        function addFood() {
+            var x = plane.getMinCoord().x + Math.floor((Math.random() * (plane.getMaxCoord().x - plane.getMinCoord().x - 1)));
+            var y = plane.getMinCoord().y + Math.floor((Math.random() * (plane.getMaxCoord().y - plane.getMinCoord().y  - 1)));
+            food = new Food(x, y);
+            world.addObject(food, true);
+        }
+
+        addFood();
+
+        function test() {
+            snake.move();
+            if (snake.head.coord.x >= plane.getMaxCoord().x) {
+                snake.head.coord.x = plane.getMinCoord().x;
+            }
+
+            if (snake.head.coord.x < plane.getMinCoord().x) {
+                snake.head.coord.x = plane.getMaxCoord().x;
+            }
+
+            if (snake.head.coord.y <= plane.getMaxCoord().y) {
+                snake.head.coord.y = plane.getMinCoord().y;
+            }
+
+            if (snake.head.coord.y > plane.getMinCoord().y) {
+                snake.head.coord.y = plane.getMaxCoord().y;
+            }
+
+            if (snake.head.coord.x == food.coord.x && snake.head.coord.y == food.coord.y) {
+                snake.grow();
+                world.removeObject(food);
+                addFood();
+            }
+            world.refresh();
+            setTimeout(test, 100);
+        }
+
+
+
+        test();
+
+        onkeypress = function (evt) {
+            //console.log(evt);
+            switch (evt.charCode) {
+                case 97:
+                    snake.direction = "left";
+                    break;
+
+                case 119:
+                    snake.direction = "up";
+                    break;
+
+                case 100:
+                    snake.direction = "right";
+                    break;
+
+                case 115:
+                    snake.direction = "down";
+            }
+        }
+
+
+    </script>
+        
+    
+
+</body>
+</html>

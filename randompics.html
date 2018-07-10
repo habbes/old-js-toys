@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+<script src="imagemosaic.js"></script>
+<script>
+
+
+
+var mosaic;
+var timeout;
+var avgw = 30;
+var avgh = 30;
+var dev = 20;
+var sections = 400;
+var interval = 100;
+var running = false;
+var shuffle = false;
+
+var widthBox;
+var heightBox;
+var squareCheck;
+var devBox;
+var intervalBox;
+var sectionBox;
+var shuffleCheck;
+var startBtn;
+
+function settingsField(element, evt, setting){
+
+	element.setting = setting;
+	element.addEventListener(evt, function(){
+		affectSetting(this);
+	}, false);
+}
+
+
+window.onload = function(){
+
+	//init settings fields
+	widthBox = document.getElementById("width");
+	settingsField(widthBox, "change", f = function(){
+		avgw = parseFloat(this.value);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+		console.log(this.value);
+	});
+	
+
+	heightBox = document.getElementById("height");
+	settingsField(heightBox, "change", f = function(){
+		avgh = parseFloat(this.value);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+	});
+
+	squareCheck = document.getElementById("square");
+	settingsField(squareCheck, "change", f = function(){
+		mosaic.isAvgSquare = this.checked;
+		mosaic.setUseOptimalSize(true);
+		mosaic.setMaxSections(sections);
+	});
+
+	devBox = document.getElementById("deviation");
+	settingsField(devBox, "change", f = function(){
+		dev = parseFloat(this.value);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+	});
+	
+	sectionBox = document.getElementById("sections");
+	settingsField(sectionBox, "change", f = function(){
+		sections = parseFloat(this.value);
+		mosaic.setUseOptimalSize(true);
+		mosaic.setMaxSections(sections);
+	});
+	
+	intervalBox = document.getElementById("interval");
+	settingsField(intervalBox, "change", f = function(){
+		interval = parseInt(this.value);
+	});
+
+	shuffleCheck = document.getElementById("shuffle");
+	settingsField(shuffleCheck, "change", f = function(){
+		shuffle = this.checked;
+	});
+	
+	startBtn = document.getElementById("start");
+	startBtn.onclick = function(){
+		running = !running;
+		if(running)this.textContent = "Stop Loop";
+		else this.textContent = "Start Loop";
+		mosaicLoop();
+	};
+
+	//init mosaic and inital settings
+	canvas = document.getElementById("canvas");
+	mosaic = new Mosaic(canvas, canvas.width, canvas.height);
+	image = new Image();
+	image.src = "kingfisher.jpg";
+	image.onload = function(){
+		mosaic.setImage(this);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+		updateFields();
+
+		mosaic.randomMosaic(shuffle);
+	}
+	
+
+}
+
+
+
+function mosaicLoop(){
+	if(!running) return;
+	mosaic.randomMosaic(shuffle);
+	timeout = setTimeout(mosaicLoop, interval);
+}
+
+function affectSetting(el){
+	clearTimeout(timeout);
+	mosaic.clear();
+	el.setting();
+	updateFields();
+	mosaicLoop();
+}
+
+function updateFields()
+{
+	avgw = mosaic.avgWidth;
+	avgh = mosaic.avgHeight;
+	sections = mosaic.maxSections;
+	dev = mosaic.deviation;
+	widthBox.value = avgw;
+	heightBox.value = avgh;
+	squareCheck.checked = mosaic.isAvgSquare;
+	devBox.value = dev;
+	sections = mosaic.maxSections;
+	sectionBox.value = sections;
+	intervalBox.value = interval;
+	shuffleCheck.checked = shuffle;
+}
+
+</script>
+<style>
+
+div div {
+	margin-bottom:10px;
+}
+
+input[type=text] {
+	width:50px;
+}
+</style>
+
+</head>
+
+<body style="font-family:calibri">
+
+<canvas id="canvas" width="800" height="545" style="position:relative;border:1px solid black;float:left;"></canvas>
+
+<div style="margin-left:840px">
+	<div>
+		Average Width <input type="text" id="width" />  
+	</div>
+	<div>
+		Average Height <input type="text" id="height"  />
+	</div>
+	<div>
+		Average section square <input type="checkbox" id="square" />
+	</div>
+	<div>
+		Deviation (+/-) <input type="text" id="deviation" />
+	</div>
+	<div>
+		Maximum sections <input type="text" id="sections" />
+	</div>
+	<div>
+		Shuffle <input type="checkbox" id="shuffle" />
+	</div>
+	<div>
+		Loop interval (ms) <input type="text" id="interval" />
+	</div>
+	<div>
+		<button id="start">Start Loop</button>
+	</div>
+
+</div>
+
+</body>
+
+</html>

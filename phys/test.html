@@ -1,0 +1,130 @@
+<html>
+
+<head>
+<script src="graph.js"></script>
+<script>
+
+
+
+</script>
+</head>
+<body>
+
+<canvas id="canvas" width="800" height="600" style="float:left"></canvas>
+
+<script>
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+g = new Graph((canvas.width)/2, (canvas.height)/2, 20, 0, 0, canvas.width, canvas.height, context);
+
+
+
+//g.plotFunction(f = function(x){Math.tan, "green");
+
+g.plotFunction(f = function(x){return 1/x}, "blue");
+
+g.plotFunction(Math.cos,"rgb(145,200,204)");
+g.plotFunction(Math.sin,"rgb(34,234,23)");
+
+//g.toggleYAxis();
+
+
+
+g.plotFunction(f = function(x){return Math.pow(2,x)}, "turquoise");
+g.plotFunction(f = function(x){return Math.log(x,2)}, "turquoise");
+g.plotFunction(f = function(x){return x},"cyan");
+
+
+/*
+g.plotFunction(f = function(x){return (x+2)/(x+2)},"green");
+
+g.plotPoints(Array([1,2],[2,2],[6,7],[9,2]));
+*/
+
+</script>
+
+<div id="controls" style="margin-left:850px">
+
+<span>Zoom</span><button onclick="g.zoom(2)">In</button><button onclick="g.zoom(0.5)">Out</button><br/>
+
+<span>Move</span><button onclick="g.moveY(1/g.unit * 10)">Up</button><button onclick="g.moveY(-1/g.unit * 10)">Down</button><button onclick="g.moveX(1/g.unit * 10)"
+>Right</button><button onclick="g.moveX(-1/g.unit * 10)">Left</button><br/>
+<button onclick="g.toggleXAxis()">Toggle X Axis</button><button onclick="g.toggleYAxis()">Toggle Y Axis</button><button
+onclick="g.showAxes()">Show Both</button><button onclick="g.hideAxes()">Hide Both</button><br>
+
+<button onclick="g.toggleBorders()">Toggle Borders</button><br>
+<button id="clearBtn">Clear Graph</button>
+
+<br>
+f(x) = <input type="text" id="functionInput" /> <button id="plotFuncBtn">Plot Function</button>
+
+<script>
+
+var xSpan = document.getElementById('xPosition');
+var ySpan = document.getElementById('yPosition');
+
+var posHtml = "<div class='posDisp' style='border:2px solid black; padding:2px; font-family:calibri; width:80px;opacity:0.7;background-color:rgb(200,200,200)'> " +
+"<div>x = <span class='xPos'></span></div> " +
+"<div>y = <span class='yPos'></span></div> " +
+"</div> ";
+
+
+var posDisp = document.createElement("DIV");
+posDisp.innerHTML = posHtml;
+posDisp.style.position = "absolute";
+xSpan = posDisp.getElementsByClassName("xPos")[0];
+ySpan = posDisp.getElementsByClassName('yPos')[0];
+
+document.body.appendChild(posDisp);
+
+canvas.onmousemove = function(evt){
+	//console.log(evt);
+	var x = evt.clientX - canvas.offsetLeft;
+	var y = evt.clientY - canvas.offsetTop;
+	posDisp.style.top = (evt.clientY -2 - posDisp.offsetHeight) + "px";
+	posDisp.style.left = (evt.clientX + 2) +  "px";
+
+	//console.log(x,y);
+	var coord = g.getGraphCoord(new Coord(x,y));
+	xSpan.textContent = coord.x;
+	ySpan.textContent = coord.y;
+}
+
+var plotBtn = document.getElementById("plotFuncBtn");
+var funcInput = document.getElementById("functionInput");
+
+plotBtn.onclick = function(){
+	console.log(funcInput.value);
+	funcText = "f = function(x){return ";
+	funcText += funcInput.value;
+	funcText += ";}";
+	eval(funcText);
+	if(f){
+		console.log(f);
+		var r, gr, b;
+		r = Math.floor(Math.random() * 256);
+		gr = Math.floor(Math.random() * 256);
+		b = Math.floor(Math.random() * 256);
+		g.plotFunction(f, "rgb(" + r + "," + gr + "," + b +")");
+	} else {
+		alert("Error");
+	}
+}
+
+document.getElementById("clearBtn").onclick = function(){
+	g.clearFunctions();
+	g.refresh();
+}
+
+//make all math properties global
+mathProps = Object.getOwnPropertyNames(Math);
+for (var i in mathProps){
+	window[mathProps[i]] = Math[mathProps[i]];
+}
+</script>
+
+</div>
+
+
+</body>
+</html>

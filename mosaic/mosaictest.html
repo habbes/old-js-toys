@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+<head>
+<script src="imagemosaic.js"></script>
+<script>
+
+
+
+var mosaic;
+var images = [];
+var timeout;
+var avgw = 30;
+var avgh = 30;
+var dev = 20;
+var sections = 400;
+var interval = 100;
+var running = false;
+var shuffle = false;
+
+var widthBox;
+var heightBox;
+var squareCheck;
+var devBox;
+var intervalBox;
+var sectionBox;
+var shuffleCheck;
+var squeezeCheck;
+var startBtn;
+var reloadBtn;
+var imageBox;
+var paintBtn;
+
+var maxWidth = 800;
+var maxHeight = 545;
+
+function settingsField(element, evt, setting){
+
+	element.setting = setting;
+	element.addEventListener(evt, function(){
+		affectSetting(this);
+	}, false);
+}
+
+
+window.onload = function(){
+
+	//init settings fields
+	widthBox = document.getElementById("width");
+	settingsField(widthBox, "change", f = function(){
+		avgw = parseFloat(this.value);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+		console.log(this.value);
+	});
+	
+
+	heightBox = document.getElementById("height");
+	settingsField(heightBox, "change", f = function(){
+		avgh = parseFloat(this.value);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+	});
+
+	squareCheck = document.getElementById("square");
+	settingsField(squareCheck, "change", f = function(){
+		mosaic.isAvgSquare = this.checked;
+		mosaic.setUseOptimalSize(true);
+		mosaic.setMaxSections(sections);
+	});
+
+	devBox = document.getElementById("deviation");
+	settingsField(devBox, "change", f = function(){
+		dev = parseFloat(this.value);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+	});
+	
+	sectionBox = document.getElementById("sections");
+	settingsField(sectionBox, "change", f = function(){
+		sections = parseFloat(this.value);
+		mosaic.setUseOptimalSize(true);
+		mosaic.setMaxSections(sections);
+	});
+	
+	intervalBox = document.getElementById("interval");
+	settingsField(intervalBox, "change", f = function(){
+		interval = parseInt(this.value);
+	});
+
+	shuffleCheck = document.getElementById("shuffle");
+	settingsField(shuffleCheck, "change", f = function(){
+		shuffle = this.checked;
+	});
+
+	squeezeCheck = document.getElementById("squeeze");
+	settingsField(squeezeCheck, "change", f = function(){
+		mosaic.setAllowSqueeze(this.checked);
+	});
+	
+	startBtn = document.getElementById("start");
+	startBtn.onclick = function(){
+		running = !running;
+		if(running)this.textContent = "Stop Loop";
+		else this.textContent = "Start Loop";
+		mosaicLoop();
+	};
+
+	imageBox = document.getElementById("image");
+	reloadBtn = document.getElementById("reload");
+	reloadBtn.onclick = function(){
+
+		clearTimeout(timeout);
+		mosaic.clear();
+		var old = image.src;
+		image.src = imageBox.value;
+		//image does not reload if source has not changed
+		if(image.src == old){
+			mosaicLoop();
+		}
+	};
+
+	paintBtn = document.getElementById("paint");
+	settingsField(paintBtn, "click", f = function(){
+		mosaic.randomMosaic();
+	});
+
+	//init mosaic and inital settings
+	canvas = document.getElementById("canvas");
+	mosaic = new Mosaic(canvas, canvas.width, canvas.height);
+	image = new Image();
+	image.onload = function(){
+		mosaic.setImage(this);
+		//balance aspect ratio
+		var r = this.width/this.height;
+		if(this.width < maxWidth)
+			mosaic.setSize(r * maxHeight, maxHeight);
+		else
+			mosaic.setSize(maxWidth, maxWidth / r);
+		mosaic.setUseOptimalSize(false);
+		mosaic.setAvgSize(avgw, avgh, dev);
+		updateFields();
+		mosaicLoop();
+	}
+	
+
+}
+
+
+
+function mosaicLoop(){
+	mosaic.randomMosaic(shuffle);
+	if(!running) return;
+	timeout = setTimeout(mosaicLoop, interval);
+}
+
+function affectSetting(el){
+	clearTimeout(timeout);
+	mosaic.clear();
+	el.setting();
+	updateFields();
+	mosaicLoop();
+}
+
+function updateFields()
+{
+	avgw = mosaic.avgWidth;
+	avgh = mosaic.avgHeight;
+	sections = mosaic.maxSections;
+	dev = mosaic.deviation;
+	widthBox.value = avgw;
+	heightBox.value = avgh;
+	squareCheck.checked = mosaic.isAvgSquare;
+	devBox.value = dev;
+	sections = mosaic.maxSections;
+	sectionBox.value = sections;
+	intervalBox.value = interval;
+	shuffleCheck.checked = shuffle;
+}
+
+</script>
+<style>
+
+div div {
+	margin-bottom:10px;
+}
+
+input[type=text] {
+	width:50px;
+}
+</style>
+
+</head>
+
+<body style="font-family:calibri">
+
+<canvas id="canvas" width="800" height="545" style="position:relative;border:0px solid black;float:left;"></canvas>
+
+<div style="margin-left:840px">
+	<div>
+		Average Width <input type="text" id="width" />  
+	</div>
+	<div>
+		Average Height <input type="text" id="height"  />
+	</div>
+	<div>
+		Average section square <input type="checkbox" id="square" />
+	</div>
+	<div>
+		Deviation (+/-) <input type="text" id="deviation" />
+	</div>
+	<div>
+		Maximum sections <input type="text" id="sections" />
+	</div>
+	<div>
+		Squeeze <input type="checkbox" id="squeeze" />
+	</div>
+	<div>
+		Shuffle <input type="checkbox" id="shuffle" />
+	</div>
+	<div>
+		Loop interval (ms) <input type="text" id="interval" />
+	</div>
+	<div>
+		<button id="paint">New Mosaic</button>
+	</div>
+	<div>
+		<button id="reload">Load Image</button> <input type="text" style="width:270px" id="image" />
+	</div>
+	<div>
+		<button id="start">Start Loop</button>
+	</div>
+
+</div>
+
+</body>
+
+</html>

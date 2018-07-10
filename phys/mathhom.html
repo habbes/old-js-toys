@@ -1,0 +1,100 @@
+<html>
+
+<head>
+<script src="graph.js"></script>
+<script>
+
+
+
+</script>
+</head>
+<body>
+
+<canvas id="canvas" width="1100" height="700" style="float:left"></canvas>
+
+<script>
+var canvas = document.getElementById("canvas");
+var context = canvas.getContext("2d");
+var g = new Graph((canvas.width)/2, (canvas.height)/2, 20, 0, 0, canvas.width, canvas.height, context);
+
+
+
+//g.plotFunction(f = function(x){Math.tan, "green");
+
+/*
+g.plotFunction(f = function(x){return 1/x}, "blue");
+
+g.plotFunction(Math.cos,"rgb(145,200,204)");
+g.plotFunction(Math.sin,"rgb(34,234,23)");
+*/
+//g.toggleYAxis();
+
+
+
+g.plotFunction(f = function(x){return 1 - 2 * x - 3 * Math.pow(x,2)}, "green");
+g.plotFunction(f = function(x){return -4 * x + 1 / 2}, "blue");
+//g.plotFunction(f = function(x){return x},"cyan");
+
+
+/*
+g.plotFunction(f = function(x){return (x+2)/(x+2)},"green");
+
+g.plotPoints(Array([1,2],[2,2],[6,7],[9,2]));
+*/
+
+</script>
+
+<div id="controls" style="margin-left:1120px">
+
+<span>Zoom</span><button onclick="g.zoom(2)">In</button><button onclick="g.zoom(0.5)">Out</button><br/>
+
+<span>Move</span><button onclick="g.moveY(1/g.unit * 10)">Up</button><button onclick="g.moveY(-1/g.unit * 10)">Down</button><button onclick="g.moveX(1/g.unit * 10)"
+>Right</button><button onclick="g.moveX(-1/g.unit * 10)">Left</button><br/>
+
+
+
+
+<script>
+
+var xSpan = document.getElementById('xPosition');
+var ySpan = document.getElementById('yPosition');
+
+var posHtml = "<div class='posDisp' style='border:2px solid black; padding:2px; font-family:calibri; min-width:80px;opacity:0.7;background-color:rgb(235,235,235)'> " +
+"<div>x = <span class='xPos'></span></div> " +
+"<div>y = <span class='yPos'></span></div> " +
+"</div> ";
+
+
+var posDisp = document.createElement("DIV");
+posDisp.innerHTML = posHtml;
+posDisp.style.position = "absolute";
+xSpan = posDisp.getElementsByClassName("xPos")[0];
+ySpan = posDisp.getElementsByClassName('yPos')[0];
+
+document.body.appendChild(posDisp);
+
+canvas.onmousemove = function(evt){
+	//console.log(evt);
+	var x = evt.clientX - canvas.offsetLeft;
+	var y = evt.clientY - canvas.offsetTop;
+	posDisp.style.top = (evt.clientY  - 2 - posDisp.offsetHeight) + "px";
+	posDisp.style.left = (evt.clientX + 2 ) +  "px";
+
+	//console.log(x,y);
+	var coord = g.getGraphCoord(new Coord(x,y));
+	xSpan.innerText = coord.x;
+	ySpan.innerText = coord.y;
+}
+
+</script>
+
+</div>
+
+<div style="clear:all">
+<br>
+<b>Functions:</b> <br>
+<span style="color:green">y = 1 - 2x - 3x<sup>2</sup></span><br>
+<span style="color:blue">y = -4x + 1/2</span>
+</div>
+</body>
+</html>

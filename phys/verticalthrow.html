@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+
+<head>
+
+<title>Vertical Throw</title>
+
+<script src = "CartesianPlane.js"></script>
+<script src = "graph.js"></script>
+
+<script>
+
+function Ball(x, y, radius, style){
+	this.coord = new Coord(x, y);
+	this.radius = radius;
+	this.style = style;
+}
+
+</script>
+
+
+</head>
+
+<body>
+
+<div>
+	<canvas id="canvas" width="500" height="400"></canvas>
+</div>
+<div>
+	<canvas id="graphCanvas" width="500" height="400"></canvas>
+</div>
+
+<script>
+
+var canvas = document.getElementById("canvas");
+var c = canvas.getContext("2d");
+var p = new CartesianPlane(c, 0, 0, canvas.width, canvas.height, canvas.width/2, canvas.height/2, 15, 15);
+p.borders = true;
+p.refresh();
+
+var gcanv = document.getElementById("graphCanvas");
+var gc = gcanv.getContext("2d");
+var g = new Graph(canvas.width/2, canvas.height/2, 20, 0, 0, canvas.width, canvas.height, gc);
+
+function drawBall(ball, plane){
+	plane.context.beginPath();
+	coord = plane.getInnerCoord(ball.coord);
+	plane.context.arc(coord.x, coord.y, ball.radius, 0, Math.PI * 2);
+	plane.context.fillStyle = ball.style;
+	plane.context.fill();
+}
+
+function randColor(){
+	var r = Math.ceil(Math.random() * 255);
+	var g = Math.ceil(Math.random() * 255);
+	var b = Math.ceil(Math.random() * 255);
+
+	return "rgb(" + r + ", " + g + ", " + b + ")";
+}
+
+var b = new Ball(0, 0, 10, randColor());
+
+
+var t = 0;
+var v0 = 15000;
+var h0 = 0;
+var gravity = -10;
+
+function getDist(a, t, v0, h0){ 
+	return h0 + v0 * t + 1/2 * a * Math.pow(t, 2);
+}
+
+var frameLength = 1000/30;
+
+
+
+function fall(){
+	
+	t += frameLength;
+	b.style = randColor();
+	b.coord.x = getDist(gravity, t, v0, h0);
+	//console.log(b.coord.x);
+	console.log(p.getInnerCoord(b.coord));
+	//p.refresh();
+	drawBall(b, p);
+	//console.log(t);
+	if(b.coord.x > 0){
+	setTimeout('fall()', frameLength);
+}
+}
+
+drawBall(b, p);
+setTimeout('fall()', frameLength);
+
+
+
+</script>
+
+</body>
+
+</html>

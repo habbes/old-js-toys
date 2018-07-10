@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Sliding Tiles</title>
+<script type="text/javascript" src="tiles.js"></script>
+<style>
+@charset "utf-8";
+/* CSS Document */
+
+h1{
+	font-size:1.4em;
+	color:#396;
+	margin-bottom:40px;
+}
+
+.tile{
+	font-family:"Segoe UI";
+	font-size:2em;
+	float:left;
+	
+	width:50px;
+	height:50px;
+	padding:10px;
+	text-align:center;
+	border:1px solid #09C;
+	margin-bottom:2px;
+	margin-right:2px;
+	cursor:pointer;
+	background-color:#0CF;
+	color:white;
+	font-weight:bold;	
+}
+
+#empty{
+	background-color:white;
+	border-color:white;
+	cursor:default;
+}
+
+.row{
+	
+	clear:both;	
+}
+
+#selected{
+	background-color:rgb(200,200,200);	
+}
+
+#gameBoard{	
+	
+}
+
+#grid{
+	/*border:1px solid black;*/	
+}
+
+#message{
+	clear:both;
+	font-weight:bold;
+	margin-bottom:40px;	
+	color:#960;	
+}
+
+#controls{
+	margin-bottom:40px;	
+}
+
+#newBtn{
+	padding:5px;
+	font-family:Segoe UI;	
+}
+
+.sizeBtn{
+	text-align:center;
+	width:25px;	
+}
+
+.controlVal{
+	border:1px solid #CCC;
+	font-size:0.9em;
+	color:#333;
+	padding-left:4px;
+	padding-right:4px;
+	
+	
+	
+}
+
+</style>
+<script>
+
+window.onload = initAll;
+
+function initAll(){
+	document.getElementById("newBtn").onclick = function(){
+		rows = parseInt(document.getElementById("gridRowsSpn").innerHTML);
+		cols = parseInt(document.getElementById("gridColsSpn").innerHTML);
+		board = document.getElementById("gameBoard");
+		setMessage("");
+		document.getElementById("timeSpn").innerHTML = "00";
+		newGame(board,rows,cols);
+		ontimetick = function(evt){			
+			document.getElementById("timeSpn").innerHTML = formatTime(evt.time);	
+		};
+		ongamesolved = function(evt){
+			parts = timeParts(evt.time);
+			m = parts[0];			
+			s = parts[1];
+			var mword = (m>1)? (m + " minutes ") : (m + " minute ");
+			mword = (m==0)? "" : (mword);
+			var sword = (s>1)? (s + " seconds") : (s + " second");
+			if (m >= 1){
+				sword = (s==0)? "" : sword;					
+			}
+			var conn = (m>0 && s>0)?" and " : "";
+			var movesword = (evt.moves > 1)?" moves":" move";		
+			msg = "Congratulations! You solved the puzzle in " + mword + conn +
+				sword + " and in " + evt.moves + movesword + ".";
+			setMessage(msg);
+			document.getElementById("timeSpn").innerHTML = "00";
+		};
+		
+	};
+}
+
+function formatTime(time){
+	
+	mins = Math.floor(time/60);	
+	secs = time % 60;
+	secs = "" + secs;
+	if (secs.length < 2) secs = "0" + secs;	
+	if (mins > 0) return mins + ":" + secs;		
+	return secs;
+}
+
+function timeParts(time){
+	mins = Math.floor(time/60);	
+	secs = time % 60;
+	return [mins,secs];
+}
+
+function setMessage(msg){	
+	document.getElementById("message").innerHTML=msg;	
+}
+
+
+function gridRowsUp(){
+	e = document.getElementById("gridRowsSpn");
+	e.innerHTML = parseInt(e.innerHTML) + 1;
+}
+
+function gridRowsDown(){
+	e = document.getElementById("gridRowsSpn");
+	if (parseInt(e.innerHTML) > 2){
+		e.innerHTML = parseInt(e.innerHTML) - 1;
+	}
+}
+
+function gridColsUp(){
+	e = document.getElementById("gridColsSpn");
+	e.innerHTML = parseInt(e.innerHTML) + 1;
+}
+
+function gridColsDown(){
+	e = document.getElementById("gridColsSpn");
+	if (parseInt(e.innerHTML) > 2){
+		e.innerHTML = parseInt(e.innerHTML) - 1;
+	}
+}
+
+</script>
+</head>
+
+<body style="font-family:Segoe Ui;background-color:white">
+<h1>Sliding Tiles Puzzle</h1>
+<div id="controls">
+<button id="newBtn">New Puzzle</button>
+<span>Rows: </span>
+<span id="gridRowsSpn" class="controlVal">3</span>
+<button class="sizeBtn" onclick="gridRowsUp()">+</button>
+<button class="sizeBtn" onclick="gridRowsDown()">-</button>&nbsp;&nbsp;
+<span>Cols: </span>
+<span id="gridColsSpn" class="controlVal">3</span>
+<button class="sizeBtn" onclick="gridColsUp()">+</button>
+<button class="sizeBtn" onclick="gridColsDown()">-</button>&nbsp;&nbsp;
+<span>Time: </span>
+<span id="timeSpn" class="controlVal">00</span>
+
+</div>
+
+<div id="message">
+</div>
+
+<div id="gameBoard">
+
+</div>
+
+
+
+</body>
+</html>

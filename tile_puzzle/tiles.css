@@ -1,0 +1,62 @@
+@charset "utf-8";
+/* CSS Document */
+
+.tile{
+	font-family:"Segoe UI";
+	font-size:2em;
+	float:left;
+	
+	width:50px;
+	height:50px;
+	padding:10px;
+	text-align:center;
+	border:1px solid #09C;
+	margin-bottom:2px;
+	margin-right:2px;
+	cursor:pointer;
+	background-color:#0CF;
+	color:white;
+	font-weight:bold;	
+}
+
+#empty{
+	background-color:white;
+	border-color:white;	
+}
+
+.row{
+	float:none;
+	clear:both;	
+}
+
+#selected{
+	background-color:rgb(200,200,200);	
+}
+
+#gameBoard{
+	/*float:none;*/
+	/*clear:both; */
+	
+	
+	
+}
+
+#grid{
+	/*border:1px solid black;*/	
+}
+
+#message{
+	clear:both;
+	font-weight:bold;
+	
+	color:red;	
+}
+
+#controls{
+	margin-bottom:80px;	
+}
+
+#restartBtn{
+	padding:5px;
+	font-family:Segoe UI;	
+}

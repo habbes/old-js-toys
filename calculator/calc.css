@@ -1,0 +1,42 @@
+@charset "utf-8";
+/* CSS Document */
+#frame{
+	width:200px;
+	border:1px solid black;
+}
+
+#frame table button{
+	width:48px;
+	height:48px;
+	text-align:center;
+	padding:0px;
+	margin:1px;
+		
+}
+#frame table{
+	width:100%;
+	padding:0px;
+	border-collapse:collapse;
+}
+#frame table tr{
+	width:100%;
+	padding:0px;
+	margin:0px;
+}
+
+#frame table tr td{
+	width:50px;
+	
+	padding:0px;
+	/*margin:1px;*/
+	
+}
+
+#display{
+	width:180px;
+	height:30px;
+	padding:10px;
+	text-align:right;
+	
+	
+}

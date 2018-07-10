@@ -1,0 +1,125 @@
+<html>
+
+<head>
+<script>
+
+var pass_re = /^[a-zA-Z0-9`~!@#\$%\^&\*\(\)\-_\+=\[\{\]\}\'\";:\\\|,<\.>\/\? ]*$/;
+var resultField;
+var passField;
+
+function passwordStrength(pass){
+	
+	if (passwordVeryStrong(pass)) return 4;
+	if (passwordStrong(pass)) return 3;
+	if (passwordMedium(pass)) return 2;
+	return 1;
+}
+
+function passwordValid(pass){
+	return pass_re.test(pass);
+}
+
+function passwordEmpty(pass){
+	return pass.length == 0;
+}
+
+function passwordShort(pass){
+	return pass.length < 6;
+}
+
+function passwordLong(pass){
+	return pass.length > 50;
+}
+
+function passwordVeryStrong(pass){
+	var res = [
+		/.*(?=.{12,})(?=.*[a-z](?=.*[a-z]))(?=.*[A-Z](?=.*[A-Z]))(?=.*\d(?=.*\d))/,
+		/.*(?=.{12,})(?=.*[a-z](?=.*[a-z]))(?=.*[A-Z](?=.*[A-Z]))(?=.*[\W_](?=.*[\W_]))/,
+		/.*(?=.{14,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])/,
+		];
+
+	for(var i = 0; i < res.length; i++){
+		if(res[i].test(pass)) return true;
+	}
+	return false;
+}
+
+function passwordStrong(pass){
+	var res = [
+		/.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])/,
+		/.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*\d(?=.*\d))/,
+		/.*(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_](?=.*[\W_]))/
+		];
+	for(var i = 0; i < res.length; i++){
+		if(res[i].test(pass)) return true;
+	}
+	return false;
+}
+
+function passwordMedium(pass){
+	var res = [
+		/.*(?=.{7,})(?=.*[a-z])(?=.*[A-Z])/,
+		/.*(?=.{7,})(?=.*\[a-zA-Z])(?=.*[\W_])/,
+		/.*(?=.{7,})(?=.*[a-zA-Z])(?=.*\d)/
+		];
+	for(var i = 0; i < res.length; i++){
+		if(res[i].test(pass)) return true;
+	}
+	return false;
+}
+
+function testPass(){
+	var pass = passField.value;
+
+	if (!passwordValid(pass)){
+		resultField.textContent = "password is invalid";
+		return;
+	}
+	
+	if(passwordShort(pass)){
+		resultField.textContent = "password is too short";
+		return;
+	}
+
+	if(passwordLong(pass)){
+		resultField.textContent = "password is too long";
+		return;
+	}
+
+	var strength = passwordStrength(pass);
+
+	switch(strength){
+		case 4:
+			resultField.textContent = "very strong";
+			break;
+		case 3:
+			resultField.textContent = "strong password";
+			break;
+		case 2:
+			resultField.textContent = "medium-strength password";
+			break;
+		default:
+			resultField.textContent = "weak password";
+			
+
+	}
+	
+}
+
+window.onload = function(){
+	resultField = document.getElementById('result');
+	passField = document.getElementById('password');
+}
+
+</script>
+</head>
+
+<body style="font-family:tahoma;font-size:14px">
+
+<input id="password" type="text" onkeyup="testPass()" onchange="testPass()" style="width:400px;padding:5px;font-family:tahoma;font-size:14px"><br>
+<span id="result"></span><br>
+<button id="btn" onclick="testPass()">Test</button>
+
+</body>
+
+</html>

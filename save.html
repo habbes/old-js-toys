@@ -1,0 +1,59 @@
+<html>
+<head>
+<script>
+
+function converter(num1, den1, den2){
+	return num1 * den2/ den1;
+}
+
+function ProgressBar(div, max){
+	this.div = div;
+	this.progressDiv = document.createElement("DIV");
+	this.progressDiv.style.height = this.div.offsetHeight + "px";
+	this.progressDiv.style.width = "0px";
+	this.progressDiv.style.backgroundColor = "yellow";
+	this.div.appendChild(this.progressDiv);
+	this.max = max;
+	this.currentProgress = 0;
+
+	this.drawProgress = function(progress){
+		if(progress > this.max) progress = this.max;
+		var maxWidth = this.div.offsetWidth;
+		var p = converter(progress, this.max, maxWidth);
+		if(p >= maxWidth) p = maxWidth;
+		this.progressDiv.style.width =  p + "px";
+		this.currentProgress = progress;
+	}
+
+	this.getPercentage = function(){
+		return converter(this.currentProgress, this.max, 100);
+	}
+
+	this.increment  = function(value){
+		this.drawProgress(this.currentProgress + value);
+	}
+
+}
+
+var pbar;
+window.onload = function(){
+	pbar = new ProgressBar(document.getElementById("progressBar"), 10);
+	var interval = setInterval(loop, 34);
+	var counter = 0;
+	
+	function loop(){
+		if(counter >= 10)
+			clearInterval(interval);
+		pbar.drawProgress(counter);
+		counter += 0.01;
+	}
+}
+
+</script>
+</head>
+<body>
+
+<div id="progressBar" style="background-color:black;width:700px;height:30px" ></div>
+
+</body>
+</html>

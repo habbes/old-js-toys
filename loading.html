@@ -1,0 +1,44 @@
+<html>
+
+<head>
+
+<script>
+
+function factorial(n){
+	if (n <= 1) return 1;
+	return n * factorial(n - 1);
+}
+
+function handler(){
+	var n = parseInt(document.getElementById('input').value);
+	
+						var res = factorial(n);
+			document.getElementById('result').textContent = res;
+			loader.style.display = 'none';
+}
+var loader;
+window.onload = function(){
+	loader = document.getElementById('loader');
+	document.getElementById("calcButton").onclick = function(){
+		loader.style.display = 'inline-block';
+		document.getElementById('result').textContent = '';
+
+		setTimeout(handler, 1000);
+	}
+
+}
+
+</script>
+
+</head>
+
+<body>
+
+<h1>Factorial Calculator</h1>
+
+<input type="text" id="input" /><br/>
+<button id="calcButton">Compute</button></br>
+<img width=16 id="loader" src="loading16.gif" style="display:none"/><span id="result" style="display:inline-block"></span>
+</body>
+
+</html>
